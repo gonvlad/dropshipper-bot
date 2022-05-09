@@ -1,3 +1,4 @@
+import os
 import telebot
 
 from telebot import types
@@ -19,6 +20,7 @@ TIME_FOR_RESET_APP = 60
 
 BOT_TOKEN = os.environ['BOT_TOKEN']
 CHAT_ID = os.environ['CHAT_ID']
+APP_URL = os.environ['APP_URL'] + BOT_TOKEN
 
 bot = telebot.TeleBot(BOT_TOKEN)
 main_keyboard = types.ReplyKeyboardMarkup(resize_keyboard = True)
