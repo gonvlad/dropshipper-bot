@@ -1,7 +1,9 @@
 import os
 import telebot
+import logging
 
 from telebot import types
+from Flask import Flask, request
 from time import sleep
 from datetime import datetime
 from threading import Thread
@@ -12,17 +14,18 @@ from tags_handler import handle_tag_action
 
 from pyVinted import Vinted
 
-
-vinted = Vinted("pl")
-
 TIME_BETWEEN_REQUESTS = 60
 TIME_FOR_RESET_APP = 60
 
 BOT_TOKEN = os.environ['BOT_TOKEN']
 CHAT_ID = os.environ['CHAT_ID']
-APP_URL = os.environ['APP_URL'] + BOT_TOKEN
+APP_URL = os.environ['HEROKU_APP_URL'] + BOT_TOKEN
 
 bot = telebot.TeleBot(BOT_TOKEN)
+server = Flask(__name__)
+logger = telebot.logger
+logger.setLevel(logging.DEBUG)
+vinted = Vinted("pl")
 main_keyboard = types.ReplyKeyboardMarkup(resize_keyboard = True)
 
 tracked_tags = []
@@ -63,20 +66,21 @@ def handle_main_keyboard(message):
             del tracked_tag_item_IDs[tag]
         bot.send_message(chat_id, result)
         
-        
-def init_polling_thread():
-    bot.polling()
+
+@server.route(f"/{BOT_TOKEN}", methods=["POST"])
+def redirect_message():
+    json_string = request.get_data().decode("utf-8")
+    update = telebot.types.Update.de_json(json_string)
+    bot.process_new_updates([update])
+    return "!", 200
 
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
+    bot.remove_webhook()
+    bot.set_webhook(url=APP_URL)
+    server.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    
     init_main_keyboard()
-    print("[ OK ] Keyboard initialized")
-    
-    polling_thread = Thread(target=init_polling_thread, args=[])
-    polling_thread.start()
-    print("[ OK ] Polling thread started") 
-    
-    print("[ OK ] Parsing started")
     while True:
         try:
             for tag in tracked_tags:
@@ -104,11 +108,11 @@ if __name__ == "__main__":
                             bot.send_photo(CHAT_ID, photo=photo, caption=caption, reply_markup=markup)
                         else:
                             break    
-            sleep(60)
+            sleep(TIME_BETWEEN_REQUESTS)
         except HTTPError as e:
             status_code = e.response.status_code
             print("[ >> ] HTTP Error occured | Status code " + str(status_code))
-            sleep(60)
+            sleep(TIME_FOR_RESET_APP)
         except KeyboardInterrupt:
             print("[ OK ] Application stopped")
             exit(0)
