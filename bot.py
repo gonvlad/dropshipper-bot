@@ -82,6 +82,7 @@ if __name__ == "__main__":
     init_main_keyboard()
     while True:
         try:
+            print("----------------> Test point")
             for tag in tracked_tags:
                 tag_ = tag.replace(" ", "%20")
                 items = vinted.items.search(f"https://www.vinted.pl/ubrania?search_text={tag_}&order=newest_first")
