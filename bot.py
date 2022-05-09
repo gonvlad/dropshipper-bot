@@ -6,7 +6,6 @@ from telebot import types
 from Flask import Flask, request
 from time import sleep
 from datetime import datetime
-from threading import Thread
 from requests import HTTPError
 
 from text_templates import * 
