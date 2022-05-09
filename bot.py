@@ -3,7 +3,7 @@ import telebot
 import logging
 
 from telebot import types
-from Flask import Flask, request
+from flask import Flask, request
 from time import sleep
 from datetime import datetime
 from requests import HTTPError
