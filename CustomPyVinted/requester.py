@@ -8,7 +8,7 @@ from requests.exceptions import HTTPError
 
 HEADERS = {
             "User-Agent": "PostmanRuntime/7.28.4",  # random.choice(USER_AGENTS),
-            "Host": "www.vinted.fr",
+            "Host": "www.vinted.pl",
 }
 class Requester:
     def __init__(self):
