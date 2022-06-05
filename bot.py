@@ -90,7 +90,7 @@ if __name__ == "__main__":
             for tag in tracked_tags:
                 tag_ = tag.replace(" ", "%20")
 
-                logger.info(tag_)
+                print(tag_)
 
                 # Poland config
                 #items = vinted.items.search(f"https://www.vinted.pl/ubrania?search_text={tag_}&order=newest_first")
@@ -122,12 +122,12 @@ if __name__ == "__main__":
             sleep(TIME_BETWEEN_REQUESTS)
         except HTTPError as e:
             status_code = e.response.status_code
-            logger.error("[ >> ] HTTP Error occured | Status code " + str(status_code))
+            print("[ >> ] HTTP Error occured | Status code " + str(status_code))
             sleep(TIME_FOR_RESET_APP)
         except KeyboardInterrupt:
-            logger.info("[ >> ] Application stopped")
+            print("[ >> ] Application stopped")
             exit(0)
         except ConnectionResetError:
-            logger.warning("[ >> ] Restarting application in " + str(TIME_FOR_RESET_APP) + " seconds")
+            print("[ >> ] Restarting application in " + str(TIME_FOR_RESET_APP) + " seconds")
             sleep(TIME_FOR_RESET_APP)
             
