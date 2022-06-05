@@ -83,7 +83,11 @@ def webhook():
 if __name__ == "__main__":
     init_main_keyboard()
     
+    print("Point 1")
+
     server.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
+    print("Point 2")
 
     while True:
         try:
