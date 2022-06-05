@@ -90,6 +90,8 @@ if __name__ == "__main__":
             for tag in tracked_tags:
                 tag_ = tag.replace(" ", "%20")
 
+                logger.info(tag_)
+
                 # Poland config
                 #items = vinted.items.search(f"https://www.vinted.pl/ubrania?search_text={tag_}&order=newest_first")
                 
