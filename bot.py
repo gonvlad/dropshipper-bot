@@ -23,7 +23,7 @@ bot = telebot.TeleBot(BOT_TOKEN)
 server = Flask(__name__)
 logger = telebot.logger
 logger.setLevel(logging.DEBUG)
-vinted = Vinted("pl")
+vinted = Vinted("fr")
 main_keyboard = types.ReplyKeyboardMarkup(resize_keyboard = True)
 
 tracked_tags = []
@@ -89,8 +89,13 @@ if __name__ == "__main__":
         try:
             for tag in tracked_tags:
                 tag_ = tag.replace(" ", "%20")
-                items = vinted.items.search(f"https://www.vinted.pl/ubrania?search_text={tag_}&order=newest_first")
+
+                # Poland config
+                #items = vinted.items.search(f"https://www.vinted.pl/ubrania?search_text={tag_}&order=newest_first")
                 
+                # France config
+                items = vinted.items.search(f"https://www.vinted.fr/vetements?search_text={tag_}&order=newest_first")
+
                 if tag not in tracked_tag_item_IDs.keys():
                     tracked_tag_item_IDs[tag] = [] 
                     for item in items:
