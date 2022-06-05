@@ -5,13 +5,12 @@ import logging
 from telebot import types
 from flask import Flask, request
 from time import sleep
-from datetime import datetime
 from requests import HTTPError
 
 from text_templates import * 
 from tags_handler import handle_tag_action
 
-from pyVinted import Vinted
+from CustomPyVinted.vinted import Vinted
 
 TIME_BETWEEN_REQUESTS = 60
 TIME_FOR_RESET_APP = 60
@@ -68,10 +67,10 @@ def handle_main_keyboard(message):
 
 @server.route(f"/{BOT_TOKEN}", methods=["POST"])
 def redirect_message():
-    json_string = request.get_data().decode("utf-8")
-    update = telebot.types.Update.de_json(json_string)
-    bot.process_new_updates([update])
-    return "!", 200
+   json_string = request.get_data().decode("utf-8")
+   update = telebot.types.Update.de_json(json_string)
+   bot.process_new_updates([update])
+   return "!", 200
 
 
 if __name__ == "__main__":
@@ -80,10 +79,9 @@ if __name__ == "__main__":
     bot.remove_webhook()
     bot.set_webhook(url=APP_URL)
     server.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
-    
+
     while True:
         try:
-            print("----------------> Test point")
             for tag in tracked_tags:
                 tag_ = tag.replace(" ", "%20")
                 items = vinted.items.search(f"https://www.vinted.pl/ubrania?search_text={tag_}&order=newest_first")
@@ -112,12 +110,12 @@ if __name__ == "__main__":
             sleep(TIME_BETWEEN_REQUESTS)
         except HTTPError as e:
             status_code = e.response.status_code
-            print("[ >> ] HTTP Error occured | Status code " + str(status_code))
+            logger.error("[ >> ] HTTP Error occured | Status code " + str(status_code))
             sleep(TIME_FOR_RESET_APP)
         except KeyboardInterrupt:
-            print("[ OK ] Application stopped")
+            logger.info("[ >> ] Application stopped")
             exit(0)
         except ConnectionResetError:
-            print("[ >> ] Restarting application in " + str(TIME_FOR_RESET_APP) + " seconds")
+            logger.warning("[ >> ] Restarting application in " + str(TIME_FOR_RESET_APP) + " seconds")
             sleep(TIME_FOR_RESET_APP)
             
