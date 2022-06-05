@@ -6,6 +6,7 @@ from telebot import types
 from flask import Flask, request
 from time import sleep
 from requests import HTTPError
+import threading
 
 from text_templates import * 
 from tags_handler import handle_tag_action
@@ -80,12 +81,16 @@ def webhook():
     return '!', 200
 
 
+def run_server():
+    server.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
+
 if __name__ == "__main__":
     init_main_keyboard()
     
     print("Point 1")
-
-    server.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    t = threading.Thread(target=run_server, args=())
+    t.start()
 
     print("Point 2")
 
@@ -130,6 +135,7 @@ if __name__ == "__main__":
             sleep(TIME_FOR_RESET_APP)
         except KeyboardInterrupt:
             print("[ >> ] Application stopped")
+            t.join()
             exit(0)
         except ConnectionResetError:
             print("[ >> ] Restarting application in " + str(TIME_FOR_RESET_APP) + " seconds")
